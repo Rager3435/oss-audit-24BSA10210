@@ -1,112 +1,133 @@
 #!/bin/bash
-# =============================================================
+# Shebang: specifies Bash shell for execution
+
 # Script 4: Log File Analyzer
-# Author : ATHARV U. KONDURKAR | Reg No: 24BSA10210
-# Course : Open Source Software | OSS NGMC Capstone Project
-# Purpose: Reads a log file line by line, counts occurrences
-#          of a keyword (default: "error"), and prints a
-#          summary with the last 5 matching lines.
-# Usage  : ./script4_log_analyzer.sh <logfile> [keyword]
-# Example: ./script4_log_analyzer.sh /var/log/syslog error
-# =============================================================
+# Title of the script
 
-# --- Accept command-line arguments ---
-# $1 is the first argument: path to the log file
-# $2 is the optional second argument: keyword to search for
+# Usage: ./script4.sh /var/log/syslog "error"
+# Shows how to run the script with arguments
+
+# Author: Atharv | Course: Open Source Software
+# Author information
+
 LOGFILE=$1
-KEYWORD=${2:-"error"}   # Default keyword is 'error' if not provided
+# Takes log file path as first argument
 
-# --- Counter variable to track keyword matches ---
+KEYWORD=${2:-"error"} # Default keyword is 'error'
+# Takes keyword as second argument, defaults to "error" if not provided
+
 COUNT=0
+# Initializes match counter
 
-# --- Display header ---
-echo "================================================================"
-echo "         LOG FILE ANALYZER                                      "
-echo "         Student: ATHARV U. KONDURKAR | Reg: 24BSA10210        "
-echo "================================================================"
-
-# --- Validate that a log file argument was provided ---
 if [ -z "$LOGFILE" ]; then
-    echo ""
-    echo "Usage: $0 <logfile> [keyword]"
-    echo "Example: $0 /var/log/syslog error"
-    echo ""
-    echo "Tip: Common log files on Linux:"
-    echo "  /var/log/syslog       — General system log (Debian/Ubuntu)"
-    echo "  /var/log/messages     — General system log (RHEL/Fedora)"
-    echo "  /var/log/auth.log     — Authentication events"
-    echo "  ~/.mozilla/firefox/*/firefox.log — Firefox logs (if enabled)"
+# Checks if logfile argument is missing
+
+    echo "Usage: ./script4.sh <path_to_log_file> [keyword]"
+    # Displays correct usage
+
     exit 1
+    # Exits script with error code
 fi
 
-# --- Check if the log file exists and is a regular file ---
 if [ ! -f "$LOGFILE" ]; then
-    echo ""
-    echo "Error: File '$LOGFILE' not found or is not a regular file."
-    echo "Please provide a valid path to an existing log file."
+# Checks if file does not exist
+
+    echo "Error: File $LOGFILE not found."
+    # Displays error message
+
     exit 1
+    # Exits script
 fi
 
-# --- Retry logic: check if the file is empty ---
-# This simulates a do-while style retry — checks up to 3 times
-RETRY=0
-MAX_RETRIES=3
+if [ ! -r "$LOGFILE" ]; then
+# Checks if file is not readable
 
-while [ ! -s "$LOGFILE" ] && [ $RETRY -lt $MAX_RETRIES ]; do
-    RETRY=$((RETRY + 1))
-    echo "⚠ Warning: '$LOGFILE' appears to be empty. Retry $RETRY of $MAX_RETRIES..."
-    sleep 1   # Wait 1 second before retrying (in real use, file might be writing)
-done
+    echo "Error: Cannot read $LOGFILE. You might need sudo permissions."
+    # Displays permission error
 
-# If still empty after retries, inform the user and exit
-if [ ! -s "$LOGFILE" ]; then
-    echo "✘ File is empty after $MAX_RETRIES retries. Nothing to analyze."
     exit 1
+    # Exits script
 fi
 
-echo ""
-echo "Log File : $LOGFILE"
-echo "Keyword  : '$KEYWORD' (case-insensitive)"
-echo "----------------------------------------------------------------"
-echo "Scanning file line by line..."
-echo ""
+# Do-while style retry if the file is empty
+# Keeps asking user until a non-empty file is provided
 
-# --- Read the log file line by line using a while-read loop ---
-# IFS= prevents stripping of leading/trailing whitespace
-# -r prevents backslash interpretation
-while IFS= read -r LINE; do
+while [ ! -s "$LOGFILE" ]; do
+# Checks if file is empty
 
-    # if-then: check if the current line contains the keyword
-    # grep -iq = case-insensitive (-i) and quiet mode (-q, no output)
-    if echo "$LINE" | grep -iq "$KEYWORD"; then
-        COUNT=$((COUNT + 1))   # Increment counter for each matching line
+    echo "The file $LOGFILE is empty."
+    # Displays empty file message
+
+    read -p "Would you like to analyze a different file? (Enter path or 'exit'): " LOGFILE
+    # Prompts user for new file or exit
+
+    if [ "$LOGFILE" == "exit" ]; then
+        exit 0
+        # Exits script normally
     fi
 
-done < "$LOGFILE"   # Redirect file content as input to the while loop
+    if [ ! -f "$LOGFILE" ]; then
+        echo "Error: File $LOGFILE not found."
+        # Checks new file existence
+        exit 1
+    fi
 
-# --- Print summary ---
-echo "----------------------------------------------------------------"
-echo "SUMMARY"
-echo "----------------------------------------------------------------"
-echo "Total lines scanned : $(wc -l < "$LOGFILE")"
-echo "Keyword matches     : $COUNT lines contain '$KEYWORD'"
-echo ""
+    if [ ! -r "$LOGFILE" ]; then
+        echo "Error: Cannot read $LOGFILE. Please try again."
+        # Checks read permission
+        exit 1
+    fi
+done
 
-# --- Show the last 5 matching lines for context ---
-# Uses grep to filter matching lines, tail to get last 5
-echo "Last 5 lines containing '$KEYWORD':"
-echo "----------------------------------------------------------------"
+# Read file line by line
+# Processes each line in the log file
 
-MATCHES=$(grep -i "$KEYWORD" "$LOGFILE")
+while IFS= read -r LINE; do
+# Reads file safely line by line
 
-if [ -z "$MATCHES" ]; then
-    echo "(No matching lines found)"
-else
-    # pipe grep output into tail to get only the last 5 matches
-    echo "$MATCHES" | tail -5
+    if echo "$LINE" | grep -iq "$KEYWORD"; then
+    # Checks if line contains keyword (case-insensitive)
+
+        COUNT=$((COUNT + 1))
+        # Increments match counter
+    fi
+
+done < "$LOGFILE"
+# Redirects file content into loop
+
+echo "=================================================="
+# Prints separator
+
+echo " Log Analysis Result"
+# Displays result title
+
+echo "=================================================="
+# Prints separator
+
+echo "Analyzed File : $LOGFILE"
+# Displays file analyzed
+
+echo "Keyword       : '$KEYWORD'"
+# Displays keyword used
+
+echo "Total Matches : $COUNT"
+# Displays total number of matches
+
+echo "=================================================="
+# Prints separator
+
+if [ $COUNT -gt 0 ]; then
+# Checks if any matches were found
+
+    echo "Last 5 occurrences recorded in the log:"
+    # Displays section header
+
+    echo "--------------------------------------------------"
+    # Prints separator
+
+    grep -i "$KEYWORD" "$LOGFILE" | tail -n 5
+    # Shows last 5 matching lines (case-insensitive)
+
+    echo "=================================================="
+    # Prints separator
 fi
-
-echo ""
-echo "================================================================"
-echo "Analysis complete."
-echo "================================================================"
