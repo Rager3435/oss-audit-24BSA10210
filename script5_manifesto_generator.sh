@@ -1,115 +1,96 @@
 #!/bin/bash
-# =============================================================
+# Shebang: specifies Bash shell for execution
+
 # Script 5: Open Source Manifesto Generator
-# Author : ATHARV U. KONDURKAR | Reg No: 24BSA10210
-# Course : Open Source Software | OSS NGMC Capstone Project
-# Purpose: Asks the user three interactive questions and
-#          generates a personalised open source philosophy
-#          statement, saved to a .txt file.
-# =============================================================
+# Title of the script
 
-# --- Alias demonstration (as required by the task) ---
-# alias is a shell feature that creates shorthand for commands
-# alias today='date +%d-%B-%Y'
-# We demonstrate the concept here via a comment, since aliases
-# defined inside scripts don't persist beyond the script's shell.
+# Author: Atharv | Course: Open Source Software
+# Author information
 
-# --- Display welcome banner ---
-echo "================================================================"
-echo "         OPEN SOURCE MANIFESTO GENERATOR                       "
-echo "         Student: ATHARV U. KONDURKAR | Reg: 24BSA10210        "
-echo "         Software Audited: Firefox (MPL 2.0)                   "
-echo "================================================================"
+echo "=================================================="
+# Prints separator
+
+echo "     The Open Source Manifesto Generator"
+# Displays title
+
+echo "=================================================="
+# Prints separator
+
+echo "Answer three questions to generate your personalized manifesto."
+# Instructions for user
+
 echo ""
-echo "Answer three questions to generate your personal open source"
-echo "philosophy manifesto."
-echo ""
-
-# --- Collect user input interactively using 'read' ---
-# -p flag displays a prompt on the same line as input
+# Prints empty line
 
 read -p "1. Name one open-source tool you use every day: " TOOL
-echo ""
+# Takes user input for tool name
 
 read -p "2. In one word, what does 'freedom' mean to you? " FREEDOM
-echo ""
+# Takes user input for meaning of freedom
 
 read -p "3. Name one thing you would build and share freely: " BUILD
-echo ""
+# Takes user input for what they would build
 
-# --- Validate that the user actually entered something ---
-# If any field is empty, use a default placeholder
-if [ -z "$TOOL" ]; then
-    TOOL="Firefox"
-fi
-if [ -z "$FREEDOM" ]; then
-    FREEDOM="openness"
-fi
-if [ -z "$BUILD" ]; then
-    BUILD="a useful tool for everyone"
-fi
+DATE=$(date '+%d %B %Y')
+# Stores current date
 
-# --- Get current date using the date command ---
-DATE=$(date '+%d %B %Y')           # e.g. 01 January 2025
-TIMESTAMP=$(date '+%Y%m%d_%H%M%S') # e.g. 20250101_143022 (for filename)
+USER_NAME=$(whoami)
+# Gets current username
 
-# --- Define output file name using string concatenation ---
-# whoami returns current username; combined with timestamp for uniqueness
-OUTPUT="manifesto_$(whoami)_${TIMESTAMP}.txt"
+OUTPUT="manifesto_${USER_NAME}.txt"
+# Defines output file name
 
-# --- Compose the manifesto paragraph using string concatenation ---
-# Each echo >> appends a new line to the output file
-# > creates/overwrites the file; >> appends to it
+# Alias concept demonstrated via a comment
+# alias read_manifesto="cat $OUTPUT"
+# Example alias to quickly read manifesto file
 
-echo "Writing your manifesto to: $OUTPUT"
-echo ""
+echo "=================================================="
+# Prints separator
 
-# Write the manifesto to the file
-echo "================================================================" > "$OUTPUT"
-echo "        MY OPEN SOURCE MANIFESTO                               " >> "$OUTPUT"
-echo "================================================================" >> "$OUTPUT"
-echo "Author    : ATHARV U. KONDURKAR (24BSA10210)"                   >> "$OUTPUT"
-echo "Generated : $DATE"                                               >> "$OUTPUT"
-echo "Software  : Firefox — Mozilla Public License 2.0"               >> "$OUTPUT"
-echo "----------------------------------------------------------------" >> "$OUTPUT"
-echo ""                                                                >> "$OUTPUT"
+echo "Generating your manifesto..."
+# Displays generation message
 
-# The main manifesto paragraph — built from user's answers
-echo "I believe in the power of open source." >> "$OUTPUT"
+sleep 1
+# Adds delay for effect
+
+# Compose paragraph using variables, utilizing redirection
+# Writes content into output file
+
+echo "                    ==== THE OPEN SOURCE MANIFESTO ====" > "$OUTPUT"
+# Creates file and writes title (overwrite)
+
+echo "Date: $DATE" >> "$OUTPUT"
+# Appends date to file
+
+echo "Author: $USER_NAME" >> "$OUTPUT"
+# Appends author name
+
 echo "" >> "$OUTPUT"
-echo "Every day, I rely on $TOOL — a tool that exists not because" >> "$OUTPUT"
-echo "a corporation decided to sell it, but because someone chose to" >> "$OUTPUT"
-echo "build it in the open and share it with the world." >> "$OUTPUT"
-echo "" >> "$OUTPUT"
-echo "To me, freedom means $FREEDOM. In the context of software, that" >> "$OUTPUT"
-echo "freedom is not just philosophical — it is practical. It means I" >> "$OUTPUT"
-echo "can read the code, understand what it does, trust it, fix it," >> "$OUTPUT"
-echo "and pass it on. That is what the open source movement stands for." >> "$OUTPUT"
-echo "" >> "$OUTPUT"
-echo "Inspired by projects like Firefox, which Mozilla built to keep" >> "$OUTPUT"
-echo "the internet open and protect users from corporate monopolies," >> "$OUTPUT"
-echo "I commit to giving back. Someday, I will build $BUILD and share" >> "$OUTPUT"
-echo "it freely — because the best ideas grow when everyone can see" >> "$OUTPUT"
-echo "them, question them, and improve them." >> "$OUTPUT"
-echo "" >> "$OUTPUT"
-echo "Open source is not just a license. It is a philosophy." >> "$OUTPUT"
-echo "It is the belief that knowledge shared is knowledge multiplied." >> "$OUTPUT"
-echo "" >> "$OUTPUT"
-echo "----------------------------------------------------------------" >> "$OUTPUT"
-echo "\"Given enough eyeballs, all bugs are shallow.\"" >> "$OUTPUT"
-echo "                                    — Eric S. Raymond"           >> "$OUTPUT"
-echo "================================================================" >> "$OUTPUT"
+# Adds empty line
 
-# --- Confirm the file was saved ---
-echo "================================================================"
-echo "✔ Manifesto saved successfully to: $OUTPUT"
-echo "================================================================"
-echo ""
+echo "I believe that software should be treated as a foundation for collective human progress, rather than a walled garden. Every single day, tools like $TOOL empower me to learn, create, and solve complex problems simply because their creators chose to share them with the world. To me, the core of open source is about $FREEDOM. It represents the inherent right to study, the freedom to tinker without boundaries, and the flexibility to adapt existing systems to fit our unique, evolving requirements." >> "$OUTPUT"
+# Writes first paragraph using user inputs
 
-# --- Display the manifesto on screen using cat ---
+echo "" >> "$OUTPUT"
+# Adds empty line
+
+echo "Standing directly on the shoulders of giants, I recognize that my own technological journey is fueled entirely by community contributions. In the true spirit of the free software movement, if given the opportunity and resources, I would actively build a $BUILD and distribute it freely under an open-source license. By contributing back to the FOSS ecosystem, we collectively ensure that technology continues to serve everybody, governed by transparent collaboration rather than proprietary control." >> "$OUTPUT"
+# Writes second paragraph using user input
+
+echo "Success! Your manifesto has been saved to '$OUTPUT'."
+# Displays success message
+
+echo "--------------------------------------------------"
+# Prints separator
+
+echo "          Preview of your Manifesto:"
+# Displays preview header
+
+echo "--------------------------------------------------"
+# Prints separator
+
 cat "$OUTPUT"
+# Displays content of the generated file
 
-echo ""
-echo "================================================================"
-echo "Done. Your manifesto is ready for submission."
-echo "================================================================"
+echo "=================================================="
+# Final separator
