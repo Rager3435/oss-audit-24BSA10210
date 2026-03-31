@@ -1,90 +1,85 @@
 #!/bin/bash
-# Shebang: tells the system to use the Bash shell to execute this script
+# Shebang: specifies Bash shell for execution
 
 # Script 1: System Identity Report
-# A descriptive title for the script
+# Title of the script
 
 # Author: Atharv | Course: Open Source Software
-# Author name and course information
+# Author information
 
 # --- Variables ---
-# Section header for variable declarations
+# Variable section
 
 STUDENT_NAME="Atharv"
-# Stores the student's name in a variable
+# Stores student name
 
 SOFTWARE_CHOICE="Git"
-# Stores the chosen open-source software name
+# Stores chosen software name
 
 # --- System info ---
-# Section header for collecting system information
+# System information section
 
 KERNEL=$(uname -r)
-# Gets the Linux kernel version using 'uname -r'
+# Gets kernel version
 
 USER_NAME=$(whoami)
-# Gets the current logged-in username
+# Gets current user name
 
 UPTIME=$(uptime -p)
-# Gets system uptime in a human-readable format (e.g., "up 2 hours")
+# Gets system uptime
 
 # Using a fallback mechanism for distribution name
-# Comment explaining that we check for OS details safely
+# Checks if OS info file exists
 
 if [ -f /etc/os-release ]; then
-# Checks if the file /etc/os-release exists (contains OS info)
-
     DISTRO=$(cat /etc/os-release | grep -w "PRETTY_NAME" | cut -d '=' -f 2 | tr -d '"')
-    # Extracts the OS name
-
+    # Extracts distribution name from os-release file
 else
-# If the file does not exist
-
     DISTRO="Linux Distribution"
-    # Sets a default fallback value
-
+    # Fallback value if file not found
 fi
-# Ends the if-else condition
 
 DATE=$(date "+%A, %B %d, %Y %T")
-# Gets current date and time in a formatted way
+# Gets formatted current date and time
 
 # --- Display ---
-# Section header for output display
+# Output display section
 
 echo "=================================================="
-# Prints a separator line
+# Prints separator
 
 echo "    Open Source Audit — $STUDENT_NAME"
-# Prints report title with student name
+# Prints title with name
 
 echo "=================================================="
+# Prints separator
 
 echo "Software Choice: $SOFTWARE_CHOICE"
-# Displays selected software
+# Displays software choice
 
 echo "Kernel         : $KERNEL"
 # Displays kernel version
 
 echo "Distribution   : $DISTRO"
-# Displays OS distribution name
+# Displays distribution name
 
 echo "User           : $USER_NAME"
-# Displays current user
+# Displays user name
 
 echo "Uptime         : $UPTIME"
-# Displays system uptime
+# Displays uptime
 
 echo "Current Date   : $DATE"
-# Displays current date and time
+# Displays date and time
 
 echo "=================================================="
+# Prints separator
 
 echo "License Info   : This operating system is powered by the Linux kernel,"
-# Prints first line of license information
+# License info line 1
 
 echo "                 released under the GNU General Public License v2 (GPL-2.0)."
-# Prints second line of license information
+# License info line 2
 
 echo "=================================================="
-# Final separator line
+# Final separator
